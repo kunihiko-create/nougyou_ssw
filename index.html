@@ -1,0 +1,1805 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>農業SSW 用語フラッシュカード</title>
+<style>
+  :root {
+    --orange: #C0392B;
+    --orange-dark: #96281B;
+    --orange-light: #fdeceb;
+    --orange-mid: #f3b8b1;
+    --white: #ffffff;
+    --gray: #6b7280;
+    --gray-light: #f3f4f6;
+    --text: #1f2937;
+    --text-sub: #6b7280;
+    --shadow: 0 4px 20px rgba(0,0,0,0.12);
+    --radius: 16px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Hiragino Kaku Gothic ProN', 'Meiryo', 'Noto Sans JP', sans-serif;
+    background: #fdf4f2;
+    color: var(--text);
+    min-height: 100vh;
+  }
+
+  /* ===== HEADER ===== */
+  header {
+    background: var(--orange);
+    color: white;
+    padding: 14px 16px 12px;
+    position: sticky; top: 0; z-index: 100;
+    box-shadow: 0 2px 10px rgba(192,57,43,0.35);
+  }
+  .header-inner { max-width: 600px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; }
+  .header-title { font-size: 1.05rem; font-weight: bold; line-height: 1.3; }
+  .header-title small { display: block; font-size: 0.7rem; font-weight: normal; opacity: 0.85; margin-top: 1px; }
+  .header-count {
+    background: rgba(255,255,255,0.2);
+    border-radius: 20px; padding: 4px 12px;
+    font-size: 0.8rem; font-weight: bold; white-space: nowrap;
+  }
+
+  /* ===== CATEGORIES ===== */
+  .cat-wrap {
+    background: white;
+    border-bottom: 1px solid #e5e7eb;
+    overflow-x: auto; white-space: nowrap;
+    padding: 10px 12px;
+    scrollbar-width: none;
+  }
+  .cat-wrap::-webkit-scrollbar { display: none; }
+  .cat-inner { display: inline-flex; gap: 8px; }
+  .cat-btn {
+    padding: 6px 14px; border-radius: 20px; border: none; cursor: pointer;
+    font-size: 0.78rem; font-weight: bold;
+    background: var(--gray-light); color: var(--gray);
+    transition: all .2s; white-space: nowrap;
+  }
+  .cat-btn:hover { background: var(--orange-light); color: var(--orange); }
+  .cat-btn.active { background: var(--orange); color: white; }
+
+  /* ===== MAIN ===== */
+  main { max-width: 600px; margin: 0 auto; padding: 20px 16px 100px; }
+
+  /* ===== PROGRESS ===== */
+  .progress-area { margin-bottom: 16px; }
+  .progress-top { display: flex; justify-content: space-between; font-size: 0.78rem; color: var(--text-sub); margin-bottom: 6px; }
+  .progress-bar { background: #f8cfca; border-radius: 6px; height: 8px; overflow: hidden; }
+  .progress-fill { height: 100%; background: var(--orange); border-radius: 6px; transition: width .4s; }
+
+  /* ===== CARD ===== */
+  .card-area { perspective: 1200px; margin-bottom: 20px; cursor: pointer; }
+  .card-inner {
+    position: relative; width: 100%;
+    transition: transform 0.55s cubic-bezier(0.4,0.2,0.2,1);
+    transform-style: preserve-3d;
+  }
+  .card-area.flipped .card-inner { transform: rotateY(180deg); }
+
+  .card-face {
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 28px 24px;
+    min-height: 260px;
+    display: flex; flex-direction: column; justify-content: space-between;
+  }
+  .card-front { background: white; }
+  .card-back {
+    background: var(--orange);
+    color: white;
+    position: absolute; top: 0; left: 0; width: 100%;
+    transform: rotateY(180deg);
+  }
+
+  /* front */
+  .card-cat-tag {
+    display: inline-block;
+    background: var(--orange-light); color: var(--orange);
+    border-radius: 10px; padding: 3px 10px;
+    font-size: 0.7rem; font-weight: bold; margin-bottom: 20px;
+  }
+  .card-term {
+    text-align: center; flex: 1; display: flex; flex-direction: column;
+    align-items: center; justify-content: center; gap: 8px;
+  }
+  .term-kanji { font-size: 2.2rem; font-weight: bold; line-height: 1.3; color: var(--text); }
+  .term-reading { font-size: 0.9rem; color: var(--text-sub); }
+  .card-hint { text-align: center; font-size: 0.72rem; color: var(--text-sub); opacity: 0.7; margin-top: 10px; }
+  .flip-icon { font-size: 1rem; }
+
+  /* back */
+  .back-cat-tag {
+    display: inline-block;
+    background: rgba(255,255,255,0.2); color: white;
+    border-radius: 10px; padding: 3px 10px;
+    font-size: 0.7rem; font-weight: bold; margin-bottom: 16px;
+  }
+  .back-term { font-size: 1.3rem; font-weight: bold; margin-bottom: 16px; text-align: center; }
+  .back-def-label { font-size: 0.68rem; opacity: 0.75; text-transform: uppercase; letter-spacing: .5px; margin-bottom: 6px; }
+  .back-def-ja {
+    font-size: 0.88rem; line-height: 1.7;
+    background: rgba(255,255,255,0.15); border-radius: 10px;
+    padding: 12px 14px; margin-bottom: 14px;
+  }
+  .back-def-id {
+    font-size: 0.82rem; line-height: 1.6;
+    background: rgba(255,255,255,0.1); border-radius: 10px;
+    padding: 10px 14px; border-left: 3px solid rgba(255,255,255,0.4);
+  }
+  .id-lang { font-size: 0.65rem; opacity: 0.7; display: block; margin-bottom: 3px; }
+
+  /* ===== CONTROLS ===== */
+  .controls { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+  .ctrl-btn {
+    width: 52px; height: 52px; border-radius: 50%; border: none; cursor: pointer;
+    font-size: 1.2rem; display: flex; align-items: center; justify-content: center;
+    transition: all .2s; font-weight: bold;
+  }
+  .ctrl-btn:hover { transform: scale(1.08); }
+  .btn-prev { background: var(--gray-light); color: var(--gray); }
+  .btn-prev:hover { background: #e5e7eb; }
+  .btn-next { background: var(--orange); color: white; box-shadow: 0 4px 14px rgba(192,57,43,0.4); }
+  .btn-next:hover { background: var(--orange-dark); }
+  .card-num { font-size: 1rem; font-weight: bold; color: var(--text-sub); text-align: center; flex: 1; }
+
+  /* ===== BOTTOM TOOLBAR ===== */
+  .bottom-bar {
+    position: fixed; bottom: 0; left: 0; right: 0;
+    background: white; border-top: 1px solid #e5e7eb;
+    padding: 10px 16px 16px;
+    display: flex; gap: 10px; justify-content: center;
+    max-width: 600px; margin: 0 auto;
+  }
+  .bottom-btn {
+    flex: 1; padding: 10px 0; border-radius: 12px; border: none; cursor: pointer;
+    font-size: 0.82rem; font-weight: bold; transition: all .2s;
+  }
+  .btn-shuffle { background: var(--orange-light); color: var(--orange); }
+  .btn-shuffle:hover { background: var(--orange-mid); }
+  .btn-reset { background: #fdeceb; color: #C0392B; }
+  .btn-reset:hover { background: #f3b8b1; }
+  .btn-mark { background: var(--gray-light); color: var(--gray); }
+  .btn-mark.marked { background: #fbdedb; color: #C0392B; }
+  .btn-mark:hover { background: #e5e7eb; }
+
+  /* ===== RESULT PANEL ===== */
+  .result-panel {
+    display: none; text-align: center;
+    background: white; border-radius: var(--radius);
+    box-shadow: var(--shadow); padding: 36px 24px;
+  }
+  .result-panel.show { display: block; }
+  .result-panel h2 { font-size: 1.5rem; color: var(--orange); margin-bottom: 10px; }
+  .result-panel p { color: var(--text-sub); font-size: 0.9rem; margin-bottom: 20px; }
+  .result-panel button {
+    background: var(--orange); color: white; border: none;
+    padding: 12px 32px; border-radius: 30px; font-size: 0.95rem; cursor: pointer;
+    font-weight: bold; box-shadow: 0 4px 14px rgba(192,57,43,0.4);
+  }
+
+  /* ===== LOGIN OVERLAY ===== */
+  #loginOverlay {
+    position: fixed; inset: 0; z-index: 9999;
+    background: linear-gradient(160deg, #6e1d15 0%, #C0392B 55%, #e8765f 100%);
+    display: flex; align-items: center; justify-content: center;
+    padding: 24px;
+  }
+  .login-box {
+    background: white; border-radius: 24px;
+    padding: 40px 32px; width: 100%; max-width: 360px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.25);
+    text-align: center;
+  }
+  .login-logo { font-size: 2.6rem; margin-bottom: 8px; }
+  .login-title { font-size: 1.25rem; font-weight: bold; color: var(--text); margin-bottom: 4px; }
+  .login-sub { font-size: 0.78rem; color: var(--text-sub); margin-bottom: 28px; line-height: 1.5; }
+  .login-label { text-align: left; font-size: 0.78rem; font-weight: bold; color: var(--text-sub); margin-bottom: 6px; display: block; }
+  .login-input {
+    width: 100%; padding: 13px 16px; border-radius: 12px;
+    border: 2px solid #e5e7eb; font-size: 1rem;
+    outline: none; transition: border-color .2s;
+    font-family: inherit; letter-spacing: 0.1em; text-align: center;
+  }
+  .login-input:focus { border-color: var(--orange); }
+  .login-btn {
+    width: 100%; margin-top: 16px; padding: 14px;
+    background: var(--orange); color: white; border: none;
+    border-radius: 30px; font-size: 1rem; font-weight: bold;
+    cursor: pointer; box-shadow: 0 4px 14px rgba(192,57,43,0.4);
+    transition: background .2s;
+  }
+  .login-btn:hover { background: var(--orange-dark); }
+  .login-error {
+    display: none; margin-top: 12px; padding: 10px 14px;
+    background: #fee2e2; color: #dc2626; border-radius: 10px;
+    font-size: 0.82rem; font-weight: bold;
+  }
+  .login-error.show { display: block; }
+  .login-note { font-size: 0.7rem; color: #9ca3af; margin-top: 18px; line-height: 1.5; }
+
+  /* ===== MODE TABS ===== */
+  .mode-tabs {
+    background: white; border-bottom: 2px solid #e5e7eb;
+    display: flex; max-width: 600px; margin: 0 auto;
+  }
+  .mode-tab {
+    flex: 1; padding: 11px 0; border: none; background: none; cursor: pointer;
+    font-size: 0.88rem; font-weight: bold; color: var(--gray);
+    border-bottom: 3px solid transparent; margin-bottom: -2px;
+    transition: all .2s; display: flex; align-items: center; justify-content: center; gap: 6px;
+  }
+  .mode-tab:hover { color: var(--orange); }
+  .mode-tab.active { color: var(--orange); border-bottom-color: var(--orange); }
+
+  /* ===== QUIZ SCREEN ===== */
+  #quizScreen { display: none; }
+  #quizScreen.active { display: block; }
+  #flashScreen { display: block; }
+  #flashScreen.hidden { display: none; }
+
+  .quiz-score-bar {
+    background: white; border-radius: 12px; padding: 14px 18px;
+    margin-bottom: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+    display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  }
+  .quiz-score-nums { font-size: 0.82rem; color: var(--text-sub); white-space: nowrap; }
+  .quiz-score-nums strong { color: var(--text); font-size: 1rem; }
+  .quiz-mini-bar { flex: 1; background: #e5e7eb; border-radius: 6px; height: 8px; overflow: hidden; }
+  .quiz-mini-fill { height: 100%; background: var(--orange); border-radius: 6px; transition: width .4s; }
+  .quiz-score-pct { font-size: 0.9rem; font-weight: bold; color: var(--orange); white-space: nowrap; }
+
+  .quiz-qnum { font-size: 0.72rem; color: var(--text-sub); margin-bottom: 10px; }
+
+  .quiz-question-card {
+    background: white; border-radius: var(--radius);
+    box-shadow: var(--shadow); padding: 24px 22px; margin-bottom: 16px;
+  }
+  .quiz-qtype {
+    display: inline-block; font-size: 0.68rem; font-weight: bold;
+    background: var(--orange-light); color: var(--orange);
+    border-radius: 8px; padding: 3px 10px; margin-bottom: 14px;
+  }
+  .quiz-question-text { font-size: 1.05rem; font-weight: bold; line-height: 1.6; color: var(--text); }
+  .quiz-question-sub { font-size: 0.78rem; color: var(--text-sub); margin-top: 6px; line-height: 1.5; }
+
+  .quiz-choices { display: flex; flex-direction: column; gap: 10px; }
+  .quiz-choice {
+    width: 100%; padding: 14px 18px; border-radius: 12px;
+    border: 2px solid #e5e7eb; background: white; cursor: pointer;
+    font-size: 0.88rem; font-weight: bold; color: var(--text);
+    text-align: left; line-height: 1.4; transition: all .18s;
+  }
+  .quiz-choice:hover:not(:disabled) { border-color: var(--orange); background: var(--orange-light); color: var(--orange); }
+  .quiz-choice.correct { border-color: #16a34a; background: #dcfce7; color: #15803d; }
+  .quiz-choice.wrong   { border-color: #dc2626; background: #fee2e2; color: #dc2626; }
+  .quiz-choice.show-correct { border-color: #16a34a; background: #dcfce7; color: #15803d; }
+  .quiz-choice:disabled { cursor: default; }
+
+  .quiz-feedback {
+    display: none; border-radius: 12px; padding: 14px 18px; margin-top: 12px;
+    font-size: 0.85rem; line-height: 1.6;
+  }
+  .quiz-feedback.show { display: block; }
+  .quiz-feedback.ok  { background: #dcfce7; color: #15803d; border: 1px solid #86efac; }
+  .quiz-feedback.ng  { background: #fee2e2; color: #dc2626; border: 1px solid #fca5a5; }
+  .quiz-feedback .fb-answer { font-weight: bold; margin-bottom: 4px; font-size: 0.95rem; }
+  .quiz-feedback .fb-def { font-size: 0.82rem; margin-top: 6px; opacity: 0.85; }
+
+  .quiz-next-btn {
+    display: none; width: 100%; margin-top: 14px;
+    padding: 14px; border-radius: 30px; border: none; cursor: pointer;
+    background: var(--orange); color: white; font-size: 0.95rem; font-weight: bold;
+    box-shadow: 0 4px 14px rgba(192,57,43,0.35); transition: background .2s;
+  }
+  .quiz-next-btn:hover { background: var(--orange-dark); }
+  .quiz-next-btn.show { display: block; }
+
+  .quiz-result {
+    display: none; text-align: center; background: white;
+    border-radius: var(--radius); box-shadow: var(--shadow); padding: 36px 24px;
+  }
+  .quiz-result.show { display: block; }
+  .quiz-result-emoji { font-size: 3rem; margin-bottom: 12px; }
+  .quiz-result h2 { font-size: 1.5rem; color: var(--text); margin-bottom: 6px; }
+  .quiz-result .result-score { font-size: 3rem; font-weight: bold; color: var(--orange); margin: 16px 0 4px; }
+  .quiz-result .result-label { font-size: 0.85rem; color: var(--text-sub); margin-bottom: 20px; }
+  .result-breakdown { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 24px; }
+  .result-cell { background: var(--gray-light); border-radius: 10px; padding: 12px 8px; }
+  .result-cell .rc-num { font-size: 1.4rem; font-weight: bold; }
+  .result-cell .rc-label { font-size: 0.72rem; color: var(--text-sub); margin-top: 2px; }
+  .result-cell.ok .rc-num { color: #16a34a; }
+  .result-cell.ng .rc-num { color: #dc2626; }
+  .result-btns { display: flex; flex-direction: column; gap: 10px; }
+  .result-btn {
+    padding: 13px 0; border-radius: 30px; border: none; cursor: pointer;
+    font-size: 0.92rem; font-weight: bold; transition: all .2s;
+  }
+  .result-btn.primary { background: var(--orange); color: white; box-shadow: 0 4px 14px rgba(192,57,43,0.35); }
+  .result-btn.secondary { background: #fdeceb; color: #C0392B; }
+  .result-btn.tertiary { background: var(--gray-light); color: var(--gray); }
+
+  .quiz-start-screen {
+    text-align: center; background: white; border-radius: var(--radius);
+    box-shadow: var(--shadow); padding: 36px 24px;
+  }
+  .quiz-start-screen h2 { font-size: 1.3rem; color: var(--text); margin-bottom: 8px; }
+  .quiz-start-screen p { font-size: 0.85rem; color: var(--text-sub); margin-bottom: 24px; line-height: 1.6; }
+  .quiz-start-options { display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; }
+  .quiz-opt-btn {
+    padding: 14px 18px; border-radius: 12px; border: 2px solid #e5e7eb;
+    background: white; cursor: pointer; font-size: 0.88rem; font-weight: bold;
+    text-align: left; display: flex; align-items: center; gap: 10px; transition: all .2s;
+  }
+  .quiz-opt-btn:hover { border-color: var(--orange); background: var(--orange-light); }
+  .quiz-opt-btn.selected { border-color: var(--orange); background: var(--orange-light); color: var(--orange); }
+  .quiz-opt-btn .opt-icon { font-size: 1.3rem; }
+  .quiz-opt-btn .opt-text { line-height: 1.3; }
+  .quiz-opt-btn .opt-sub { font-size: 0.72rem; font-weight: normal; color: var(--text-sub); display: block; }
+  .quiz-start-btn {
+    width: 100%; padding: 14px; border-radius: 30px; border: none; cursor: pointer;
+    background: var(--orange); color: white; font-size: 1rem; font-weight: bold;
+    box-shadow: 0 4px 14px rgba(192,57,43,0.35); transition: background .2s;
+  }
+  .quiz-start-btn:hover { background: var(--orange-dark); }
+
+  .bottom-bar-quiz {
+    position: fixed; bottom: 0; left: 0; right: 0;
+    background: white; border-top: 1px solid #e5e7eb;
+    padding: 10px 16px 16px;
+    display: none; gap: 10px; justify-content: center;
+    max-width: 600px; margin: 0 auto;
+  }
+  .bottom-bar-quiz.active { display: flex; }
+
+  @media (max-width: 400px) {
+    .term-kanji { font-size: 1.8rem; }
+    .card-face { padding: 22px 18px; min-height: 240px; }
+  }
+
+  /* ===== RUBY ===== */
+  ruby { ruby-align: center; }
+  rt { font-size: 0.55em; color: inherit; }
+  .card-back rt { color: rgba(255,255,255,0.85); }
+
+  /* ===== QUIZ INDONESIAN ===== */
+  .q-id-text {
+    font-size: 0.8rem; color: #6b7280; margin-top: 8px;
+    padding-top: 8px; border-top: 1px solid #e5e7eb;
+    line-height: 1.5; font-weight: normal;
+  }
+  .choice-id {
+    display: block; font-size: 0.72rem; color: #6b7280;
+    margin-top: 5px; padding-top: 5px;
+    border-top: 1px solid #e5e7eb;
+    font-weight: normal; line-height: 1.4;
+  }
+  .quiz-choice.correct .choice-id { color: #15803d; border-top-color: #86efac; }
+  .quiz-choice.wrong   .choice-id { color: #dc2626; border-top-color: #fca5a5; }
+
+  /* ===== RUBY BAR (iOSスイッチ) ===== */
+  .ruby-bar {
+    background: #f9fafb; border-bottom: 1px solid #e5e7eb;
+    padding: 6px 16px; display: flex; align-items: center; justify-content: flex-end; gap: 8px;
+  }
+  .ruby-bar-label { font-size: 0.72rem; color: var(--text-sub); }
+  .ruby-toggle-wrap { display: flex; align-items: center; gap: 6px; }
+  .ruby-toggle-switch {
+    position: relative; width: 46px; height: 26px;
+    background: #d1d5db; border-radius: 13px;
+    border: none; cursor: pointer; transition: background .25s;
+    flex-shrink: 0; padding: 0;
+  }
+  .ruby-toggle-switch.on { background: var(--orange); }
+  .ruby-toggle-knob {
+    position: absolute; top: 3px; left: 3px;
+    width: 20px; height: 20px; border-radius: 50%; background: white;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.25); transition: transform .25s;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.6rem; font-weight: bold; color: #9ca3af; pointer-events: none;
+  }
+  .ruby-toggle-switch.on .ruby-toggle-knob { transform: translateX(20px); color: var(--orange); }
+  .ruby-status-text {
+    font-size: 0.72rem; font-weight: bold; color: var(--text-sub);
+    min-width: 24px; transition: color .2s;
+  }
+  .ruby-status-text.on { color: var(--orange); }
+
+  /* ===== QUIZ INDONESIAN TOGGLE ===== */
+  .quiz-id-toggle {
+    display: inline-flex; align-items: center; gap: 5px;
+    margin-top: 14px; padding: 6px 12px;
+    border: 1.5px dashed #9ca3af; border-radius: 20px;
+    background: none; cursor: pointer; font-size: 0.75rem;
+    color: #9ca3af; transition: all .2s; font-weight: bold;
+  }
+  .quiz-id-toggle:hover { border-color: var(--orange); color: var(--orange); background: var(--orange-light); }
+  .quiz-id-toggle.active { border-color: #f59e0b; color: #b45309; background: #fef9c3; border-style: solid; }
+  .quiz-id-box {
+    display: none; margin-top: 10px;
+    background: #fffbeb; border-left: 3px solid #f59e0b;
+    border-radius: 8px; padding: 10px 14px;
+    font-size: 0.82rem; color: #78350f; line-height: 1.6;
+  }
+  .quiz-id-box.show { display: block; }
+  .quiz-id-box .id-label { font-size: 0.65rem; font-weight: bold; color: #b45309; display: block; margin-bottom: 4px; }
+  .quiz-ruby-row { display: flex; justify-content: flex-end; margin-bottom: 8px; }
+</style>
+</head>
+<body>
+
+<!-- ===== LOGIN OVERLAY ===== -->
+<div id="loginOverlay">
+  <div class="login-box">
+    <div class="login-logo">🌾</div>
+    <div class="login-title">農業SSW 用語カード</div>
+    <div class="login-sub">特定技能1号「農業」試験対策<br>Kartu Kosakata Pertanian SSW</div>
+    <label class="login-label" for="loginInput">パスワード / Password</label>
+    <div style="position:relative;">
+      <input class="login-input" id="loginInput" type="password"
+        placeholder="パスワードを入力"
+        style="padding-right:48px;"
+        onkeydown="if(event.key==='Enter') doLogin()" />
+      <button id="togglePwBtn" onclick="togglePwVisibility()"
+        type="button"
+        style="position:absolute; right:12px; top:50%; transform:translateY(-50%);
+               background:none; border:none; cursor:pointer; font-size:1.2rem;
+               color:#9ca3af; padding:4px; line-height:1;"
+        title="パスワードを表示/非表示">👁</button>
+    </div>
+    <div class="login-error" id="loginError">❌ パスワードが違います / Password salah</div>
+    <button class="login-btn" onclick="doLogin()">ログイン／Masuk</button>
+    <div class="login-note">このデバイスでは一度入力すると次回から不要です。<br>Di perangkat ini, cukup masukkan sekali.</div>
+  </div>
+</div>
+
+<header>
+  <div class="header-inner">
+    <div class="header-title">
+      農業SSW 用語カード
+      <small>特定技能1号「農業」試験対策</small>
+    </div>
+    <div class="header-count" id="headerCount">0 / 0</div>
+  </div>
+</header>
+
+<div style="background:white; border-bottom:1px solid #e5e7eb;">
+  <div class="mode-tabs">
+    <button class="mode-tab active" id="tabFlash" onclick="switchMode('flash')">🃏 フラッシュカード</button>
+    <button class="mode-tab" id="tabQuiz"  onclick="switchMode('quiz')">📝 4択練習</button>
+  </div>
+</div>
+
+<div class="ruby-bar">
+  <span class="ruby-bar-label">ふりがな</span>
+  <div class="ruby-toggle-wrap">
+    <button class="ruby-toggle-switch" id="globalRubySwitch" onclick="toggleGlobalRuby()">
+      <div class="ruby-toggle-knob">ふ</div>
+    </button>
+    <span class="ruby-status-text" id="globalRubyText">OFF</span>
+  </div>
+</div>
+
+<div class="cat-wrap" id="catWrap">
+  <div class="cat-inner" id="catButtons"></div>
+</div>
+
+<main>
+
+<!-- ===== QUIZ SCREEN ===== -->
+<div id="quizScreen">
+  <div class="quiz-start-screen" id="quizStartScreen">
+    <h2>📝 4択練習</h2>
+    <p>出題形式と問題数を選んでスタート！<br>カテゴリは上のタブで絞り込めます。</p>
+    <div id="quizCatBadge" style="display:inline-flex; align-items:center; gap:6px; background:var(--orange-light); color:var(--orange-dark); border-radius:20px; padding:5px 14px; font-size:0.82rem; font-weight:bold; margin-bottom:14px;">
+      📂 <span id="quizCatName">すべて</span>（<span id="quizCatCount">120</span>枚）
+    </div>
+    <div class="quiz-start-options">
+      <button class="quiz-opt-btn selected" id="optMixed" onclick="selectQtype('mixed')">
+        <span class="opt-icon">🔀</span>
+        <span class="opt-text">ミックス出題
+          <span class="opt-sub">「用語→意味」と「意味→用語」をランダムで出題</span>
+          <span class="opt-sub" style="color:#6b7280; margin-top:2px;">Campuran: "istilah→arti" dan "arti→istilah" secara acak</span>
+        </span>
+      </button>
+      <button class="quiz-opt-btn" id="optTerm2Def" onclick="selectQtype('term2def')">
+        <span class="opt-icon">🔍</span>
+        <span class="opt-text">用語の意味を選ぶ
+          <span class="opt-sub">用語が表示され、4つの意味から選ぶ</span>
+          <span class="opt-sub" style="color:#6b7280; margin-top:2px;">Istilah ditampilkan → pilih artinya dari 4 pilihan</span>
+        </span>
+      </button>
+      <button class="quiz-opt-btn" id="optDef2Term" onclick="selectQtype('def2term')">
+        <span class="opt-icon">💬</span>
+        <span class="opt-text">意味から用語を選ぶ
+          <span class="opt-sub">説明文が表示され、4つの用語から選ぶ</span>
+          <span class="opt-sub" style="color:#6b7280; margin-top:2px;">Penjelasan ditampilkan → pilih istilahnya dari 4 pilihan</span>
+        </span>
+      </button>
+    </div>
+    <div style="display:flex; gap:10px; margin-bottom:20px;">
+      <button class="quiz-opt-btn" id="qnum10" onclick="selectQnum(10)" style="flex:1; text-align:center; padding:10px;">10問</button>
+      <button class="quiz-opt-btn selected" id="qnum20" onclick="selectQnum(20)" style="flex:1; text-align:center; padding:10px;">20問</button>
+      <button class="quiz-opt-btn" id="qnumAll" onclick="selectQnum(0)" style="flex:1; text-align:center; padding:10px;">全問</button>
+    </div>
+    <button class="quiz-start-btn" onclick="startQuiz()">スタート ›</button>
+  </div>
+
+  <div id="quizQuestionScreen" style="display:none;">
+    <div class="quiz-score-bar">
+      <div class="quiz-score-nums"><strong id="qScoreCorrect">0</strong> / <span id="qScoreTotal">0</span> 正解</div>
+      <div class="quiz-mini-bar"><div class="quiz-mini-fill" id="qMiniFill" style="width:0%"></div></div>
+      <div class="quiz-score-pct" id="qScorePct">0%</div>
+    </div>
+    <div class="quiz-qnum" id="qNumLabel">第1問 / 20問</div>
+    <div class="quiz-question-card">
+      <span class="quiz-qtype" id="qTypeLabel">用語→意味</span>
+      <div class="quiz-question-text" id="qQuestionText">-</div>
+      <div class="quiz-question-sub" id="qQuestionSub"></div>
+      <button class="quiz-id-toggle" id="qIdToggleBtn" onclick="toggleQuizId()">
+        🇮🇩 <span id="qIdToggleLabel">インドネシア語を表示</span>
+      </button>
+      <div class="quiz-id-box" id="qIdBox">
+        <span class="id-label">🇮🇩 Bahasa Indonesia</span>
+        <span id="qIdText"></span>
+      </div>
+    </div>
+
+    <div class="quiz-ruby-row" id="qRubyRow" style="gap:8px; justify-content:flex-end;">
+      <button class="quiz-id-toggle" id="qChoiceIdToggleBtn" onclick="toggleChoiceId()" style="display:none;">
+        🇮🇩 <span id="qChoiceIdToggleLabel">インドネシア語なし</span>
+      </button>
+    </div>
+
+    <div class="quiz-choices" id="qChoices">
+      <button class="quiz-choice" id="choice0" onclick="handleAnswer(0)"></button>
+      <button class="quiz-choice" id="choice1" onclick="handleAnswer(1)"></button>
+      <button class="quiz-choice" id="choice2" onclick="handleAnswer(2)"></button>
+      <button class="quiz-choice" id="choice3" onclick="handleAnswer(3)"></button>
+    </div>
+    <div class="quiz-feedback" id="qFeedback">
+      <div class="fb-answer" id="fbAnswer"></div>
+      <div class="fb-def" id="fbDef"></div>
+      <div class="fb-def" id="fbDefId" style="margin-top:8px; padding-top:8px; border-top:1px solid rgba(0,0,0,0.08); font-size:0.78rem; opacity:0.8;">
+        <span style="font-size:0.65rem; font-weight:bold; opacity:0.7; display:block; margin-bottom:2px;">🇮🇩 Bahasa Indonesia</span>
+        <span id="fbDefIdText"></span>
+      </div>
+    </div>
+    <button class="quiz-next-btn" id="qNextBtn" onclick="nextQuizQuestion()">次の問題 ›</button>
+  </div>
+
+  <div class="quiz-result" id="quizResultScreen">
+    <div class="quiz-result-emoji" id="resultEmoji">🎉</div>
+    <h2 id="resultTitle">お疲れ様でした！</h2>
+    <div class="result-score" id="resultScoreDisplay">0 / 0</div>
+    <div class="result-label" id="resultScoreLabel">正解率 0%</div>
+    <div class="result-breakdown">
+      <div class="result-cell ok"><div class="rc-num" id="rcCorrect">0</div><div class="rc-label">✅ 正解</div></div>
+      <div class="result-cell ng"><div class="rc-num" id="rcWrong">0</div><div class="rc-label">❌ 不正解</div></div>
+    </div>
+    <div class="result-btns">
+      <button class="result-btn primary" onclick="retryWrong()" id="retryWrongBtn">❌ 間違えた問題だけ復習</button>
+      <button class="result-btn secondary" onclick="startQuiz()">🔄 同じ設定でもう一度</button>
+      <button class="result-btn tertiary" onclick="showQuizStart()">⚙️ 設定に戻る</button>
+    </div>
+  </div>
+</div><!-- /quizScreen -->
+
+<!-- ===== FLASH SCREEN ===== -->
+<div id="flashScreen">
+  <div class="progress-area">
+    <div class="progress-top">
+      <span id="progressLabel">学習中...</span>
+      <span id="progressPct">0%</span>
+    </div>
+    <div class="progress-bar">
+      <div class="progress-fill" id="progressFill" style="width:0%"></div>
+    </div>
+  </div>
+
+  <div id="cardArea" class="card-area" onclick="flipCard()">
+    <div class="card-inner" id="cardInner">
+      <div class="card-face card-front" id="cardFront">
+        <div><span class="card-cat-tag" id="frontCat">カテゴリ</span></div>
+        <div class="card-term">
+          <div class="term-kanji" id="termKanji">-</div>
+          <div class="term-reading" id="termReading">-</div>
+        </div>
+        <div class="card-hint">カードをタップして意味を確認 <span class="flip-icon">↕</span></div>
+      </div>
+      <div class="card-face card-back" id="cardBack">
+        <div>
+          <span class="back-cat-tag" id="backCat">カテゴリ</span>
+          <div class="back-term" id="backTerm">-</div>
+        </div>
+        <div>
+          <div class="back-def-label">🇯🇵 日本語</div>
+          <div class="back-def-ja" id="defJa">-</div>
+          <div class="back-def-label">🇮🇩 Bahasa Indonesia</div>
+          <div class="back-def-id">
+            <span class="id-lang">Terjemahan</span>
+            <span id="defId">-</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="controls">
+    <button class="ctrl-btn btn-prev" onclick="prevCard()">‹</button>
+    <div class="card-num" id="cardNum">- / -</div>
+    <button class="ctrl-btn btn-next" onclick="nextCard()">›</button>
+  </div>
+
+  <div class="result-panel" id="resultPanel">
+    <h2>🎉 完了！</h2>
+    <p id="resultMsg">全カードを見終わりました。</p>
+    <button onclick="restartAll()">もう一度</button>
+  </div>
+</div><!-- /flashScreen -->
+
+</main>
+
+<div class="bottom-bar" id="bottomBarFlash">
+  <button class="bottom-btn btn-shuffle" onclick="shuffleCards()">🔀 シャッフル</button>
+  <button class="bottom-btn btn-mark" id="markBtn" onclick="toggleMark()">⭐ スター</button>
+  <button class="bottom-btn btn-reset" onclick="resetProgress()">↺ リセット</button>
+</div>
+
+<div class="bottom-bar-quiz" id="bottomBarQuiz">
+  <button class="bottom-btn btn-shuffle" onclick="showQuizStart()" style="background:var(--orange-light);color:var(--orange);">⚙️ 設定</button>
+  <button class="bottom-btn btn-reset" onclick="switchMode('flash')" style="background:var(--gray-light);color:var(--gray);">🃏 カードへ</button>
+</div>
+
+<script>
+const CARDS = [
+  { id:1, category:"栽培管理", term:"栽培", reading:"さいばい", definition_ja:"作物を植えて育てること。", definition_id:"Menanam dan membudidayakan tanaman." },
+  { id:2, category:"栽培管理", term:"土壌", reading:"どじょう", definition_ja:"作物を育てる土のこと。", definition_id:"Tanah tempat tumbuhnya tanaman." },
+  { id:3, category:"栽培管理", term:"土づくり", reading:"つちづくり", definition_ja:"作物がよく育つように、土を耕し肥料を入れて改良すること。", definition_id:"Memperbaiki tanah dengan mengolah dan memberi pupuk agar tanaman tumbuh baik." },
+  { id:4, category:"栽培管理", term:"肥料", reading:"ひりょう", definition_ja:"作物の成長に必要な栄養を与えるもの。", definition_id:"Pupuk yang memberikan nutrisi untuk pertumbuhan tanaman." },
+  { id:5, category:"栽培管理", term:"有機肥料", reading:"ゆうきひりょう", definition_ja:"動植物に由来する肥料。堆肥や鶏ふんなど。", definition_id:"Pupuk organik yang berasal dari hewan/tumbuhan (kompos, kotoran ayam)." },
+  { id:6, category:"栽培管理", term:"化学肥料", reading:"かがくひりょう", definition_ja:"化学的に作られた肥料。成分の調整がしやすい。", definition_id:"Pupuk kimia buatan yang komposisinya mudah diatur." },
+  { id:7, category:"栽培管理", term:"堆肥", reading:"たいひ", definition_ja:"落ち葉や家畜のふんなどの有機物を発酵させて作る肥料。", definition_id:"Kompos dari bahan organik (daun, kotoran ternak) yang difermentasi." },
+  { id:8, category:"栽培管理", term:"施肥", reading:"せひ", definition_ja:"作物に肥料を与えること。", definition_id:"Memberikan pupuk pada tanaman." },
+  { id:9, category:"栽培管理", term:"種まき", reading:"たねまき", definition_ja:"作物の種を土にまくこと。", definition_id:"Menabur benih tanaman ke dalam tanah." },
+  { id:10, category:"栽培管理", term:"播種", reading:"はしゅ", definition_ja:"種をまくこと。種まきと同じ意味。", definition_id:"Penaburan benih (sama dengan tanemaki)." },
+  { id:11, category:"栽培管理", term:"育苗", reading:"いくびょう", definition_ja:"種から苗を育てること。", definition_id:"Membesarkan bibit dari benih." },
+  { id:12, category:"栽培管理", term:"苗", reading:"なえ", definition_ja:"種から育った、植え付け前の若い植物。", definition_id:"Bibit tanaman muda sebelum dipindahtanamkan." },
+  { id:13, category:"栽培管理", term:"定植", reading:"ていしょく", definition_ja:"苗を畑やほ場に植え付けること。", definition_id:"Menanam bibit ke lahan tetap." },
+  { id:14, category:"栽培管理", term:"移植", reading:"いしょく", definition_ja:"植物を別の場所に植え替えること。", definition_id:"Memindahkan tanaman ke tempat lain." },
+  { id:15, category:"栽培管理", term:"灌水", reading:"かんすい", definition_ja:"作物に水をやること。水やり。", definition_id:"Menyiram atau mengairi tanaman." },
+  { id:16, category:"栽培管理", term:"水管理", reading:"みずかんり", definition_ja:"作物に適切な量の水を与え、管理すること。", definition_id:"Mengelola pemberian air dalam jumlah yang tepat." },
+  { id:17, category:"栽培管理", term:"間引き", reading:"まびき", definition_ja:"混みすぎた苗を抜いて、株の間隔を調整すること。", definition_id:"Menjarangkan bibit yang terlalu rapat untuk mengatur jaraknya." },
+  { id:18, category:"栽培管理", term:"摘心", reading:"てきしん", definition_ja:"茎やつるの先端を摘み、成長や実つきを調整すること。", definition_id:"Memangkas pucuk batang untuk mengatur pertumbuhan dan pembuahan." },
+  { id:19, category:"栽培管理", term:"除草", reading:"じょそう", definition_ja:"作物の周りの雑草を取り除くこと。", definition_id:"Menyiangi atau menghilangkan gulma di sekitar tanaman." },
+  { id:20, category:"栽培管理", term:"土寄せ", reading:"つちよせ", definition_ja:"作物の株元に土を寄せて盛ること。倒れ防止などに役立つ。", definition_id:"Menimbun tanah ke pangkal tanaman; mencegah tanaman roboh." },
+  { id:21, category:"栽培管理", term:"連作障害", reading:"れんさくしょうがい", definition_ja:"同じ作物を同じ場所で続けて作ると、生育が悪くなること。", definition_id:"Gangguan tumbuh akibat menanam tanaman sama di tempat yang sama berulang kali." },
+  { id:22, category:"栽培管理", term:"輪作", reading:"りんさく", definition_ja:"異なる作物を順番に栽培すること。連作障害を防ぐ。", definition_id:"Rotasi tanaman: menanam tanaman berbeda secara bergiliran." },
+  { id:23, category:"栽培管理", term:"土壌酸度（pH）", reading:"どじょうさんど", definition_ja:"土の酸性・アルカリ性の度合い。作物に合わせて調整する。", definition_id:"Tingkat keasaman/kebasaan tanah (pH); disesuaikan dengan tanaman." },
+  { id:24, category:"作物・園芸", term:"作物", reading:"さくもつ", definition_ja:"田や畑で栽培する植物。", definition_id:"Tanaman yang dibudidayakan di sawah atau ladang." },
+  { id:25, category:"作物・園芸", term:"露地栽培", reading:"ろじさいばい", definition_ja:"屋外の畑で、自然の環境のまま行う栽培。", definition_id:"Budidaya di lahan terbuka pada kondisi alami." },
+  { id:26, category:"作物・園芸", term:"施設栽培", reading:"しせつさいばい", definition_ja:"ハウスや温室などの施設の中で行う栽培。", definition_id:"Budidaya di dalam fasilitas seperti rumah kaca." },
+  { id:27, category:"作物・園芸", term:"ハウス栽培", reading:"はうすさいばい", definition_ja:"ビニールハウスの中で作物を育てる方法。", definition_id:"Budidaya tanaman di dalam rumah kaca plastik." },
+  { id:28, category:"作物・園芸", term:"水耕栽培", reading:"すいこうさいばい", definition_ja:"土を使わず、水と養液で作物を育てる栽培。", definition_id:"Budidaya tanpa tanah, menggunakan air dan larutan nutrisi." },
+  { id:29, category:"作物・園芸", term:"葉菜類", reading:"ようさいるい", definition_ja:"葉を食べる野菜。キャベツ・ほうれん草など。", definition_id:"Sayuran daun seperti kubis dan bayam." },
+  { id:30, category:"作物・園芸", term:"果菜類", reading:"かさいるい", definition_ja:"実を食べる野菜。トマト・きゅうり・なすなど。", definition_id:"Sayuran buah seperti tomat, mentimun, terong." },
+  { id:31, category:"作物・園芸", term:"根菜類", reading:"こんさいるい", definition_ja:"根を食べる野菜。大根・人参・ごぼうなど。", definition_id:"Sayuran umbi/akar seperti lobak, wortel, gobo." },
+  { id:32, category:"作物・園芸", term:"果樹", reading:"かじゅ", definition_ja:"果物がなる木。りんご・みかん・ぶどうなど。", definition_id:"Pohon buah seperti apel, jeruk, anggur." },
+  { id:33, category:"作物・園芸", term:"稲作", reading:"いなさく", definition_ja:"米（稲）を作ること。", definition_id:"Budidaya padi (beras)." },
+  { id:34, category:"作物・園芸", term:"水田", reading:"すいでん", definition_ja:"水をはって稲を育てる田んぼ。", definition_id:"Sawah yang digenangi air untuk menanam padi." },
+  { id:35, category:"作物・園芸", term:"畑", reading:"はたけ", definition_ja:"野菜などを育てる、水をはらない土地。", definition_id:"Ladang/kebun untuk menanam sayuran (tanpa genangan air)." },
+  { id:36, category:"作物・園芸", term:"ほ場", reading:"ほじょう", definition_ja:"作物を栽培する農地のこと。", definition_id:"Lahan pertanian tempat menanam tanaman." },
+  { id:37, category:"作物・園芸", term:"受粉", reading:"じゅふん", definition_ja:"花粉がめしべにつき、実ができること。", definition_id:"Penyerbukan; serbuk sari menempel ke putik sehingga terbentuk buah." },
+  { id:38, category:"作物・園芸", term:"摘果", reading:"てきか", definition_ja:"余分な実を取り除き、残った実の品質を高めること。", definition_id:"Menjarangkan buah agar buah yang tersisa berkualitas lebih baik." },
+  { id:39, category:"作物・園芸", term:"整枝・剪定", reading:"せいし・せんてい", definition_ja:"枝を切って樹形を整え、日当たりや実つきをよくすること。", definition_id:"Memangkas cabang untuk membentuk pohon dan memperbaiki sinar serta pembuahan." },
+  { id:40, category:"作物・園芸", term:"生育", reading:"せいいく", definition_ja:"作物が育ち、成長すること。", definition_id:"Pertumbuhan dan perkembangan tanaman." },
+  { id:41, category:"作物・園芸", term:"収量", reading:"しゅうりょう", definition_ja:"一定の面積から収穫できる作物の量。", definition_id:"Jumlah hasil panen dari luas lahan tertentu." },
+  { id:42, category:"作物・園芸", term:"品種", reading:"ひんしゅ", definition_ja:"作物の種類・タイプ。味や育てやすさが異なる。", definition_id:"Varietas tanaman; rasa dan kemudahan budidayanya berbeda-beda." },
+  { id:43, category:"作物・園芸", term:"旬", reading:"しゅん", definition_ja:"その作物が最も多くとれ、おいしい時期。", definition_id:"Musim saat hasil panen paling melimpah dan lezat." },
+  { id:44, category:"病害虫・防除", term:"病害虫", reading:"びょうがいちゅう", definition_ja:"作物に害を与える病気と害虫をまとめた言い方。", definition_id:"Sebutan gabungan untuk penyakit dan hama yang merusak tanaman." },
+  { id:45, category:"病害虫・防除", term:"害虫", reading:"がいちゅう", definition_ja:"作物を食べたり傷つけたりする虫。", definition_id:"Serangga yang memakan atau merusak tanaman." },
+  { id:46, category:"病害虫・防除", term:"病気", reading:"びょうき", definition_ja:"菌やウイルスによって作物が傷み、弱ること。", definition_id:"Penyakit tanaman akibat jamur atau virus." },
+  { id:47, category:"病害虫・防除", term:"防除", reading:"ぼうじょ", definition_ja:"病害虫を防ぎ、被害を減らすこと。", definition_id:"Pengendalian untuk mencegah hama/penyakit dan mengurangi kerusakan." },
+  { id:48, category:"病害虫・防除", term:"農薬", reading:"のうやく", definition_ja:"病害虫や雑草を防ぐために使う薬。", definition_id:"Pestisida untuk mengendalikan hama, penyakit, dan gulma." },
+  { id:49, category:"病害虫・防除", term:"殺虫剤", reading:"さっちゅうざい", definition_ja:"害虫を駆除するための農薬。", definition_id:"Insektisida untuk membasmi serangga hama." },
+  { id:50, category:"病害虫・防除", term:"殺菌剤", reading:"さっきんざい", definition_ja:"病気の原因となる菌を防ぐための農薬。", definition_id:"Fungisida untuk mencegah jamur penyebab penyakit." },
+  { id:51, category:"病害虫・防除", term:"除草剤", reading:"じょそうざい", definition_ja:"雑草を枯らすための農薬。", definition_id:"Herbisida untuk membasmi gulma." },
+  { id:52, category:"病害虫・防除", term:"雑草", reading:"ざっそう", definition_ja:"作物以外に生える、不要な草。", definition_id:"Gulma; rumput liar yang tidak diinginkan." },
+  { id:53, category:"病害虫・防除", term:"散布", reading:"さんぷ", definition_ja:"農薬や肥料を、作物や土にまくこと。", definition_id:"Menyemprotkan atau menaburkan pestisida/pupuk." },
+  { id:54, category:"病害虫・防除", term:"防除暦", reading:"ぼうじょれき", definition_ja:"防除を行う時期や方法を示した予定表。", definition_id:"Kalender/jadwal yang menunjukkan waktu dan cara pengendalian hama." },
+  { id:55, category:"病害虫・防除", term:"農薬希釈", reading:"のうやくきしゃく", definition_ja:"農薬を決められた割合で水に薄めて使うこと。", definition_id:"Mengencerkan pestisida dengan air sesuai takaran yang ditentukan." },
+  { id:56, category:"病害虫・防除", term:"残留農薬", reading:"ざんりゅうのうやく", definition_ja:"収穫した作物に残った農薬。基準値を守る必要がある。", definition_id:"Residu pestisida pada hasil panen; harus memenuhi batas standar." },
+  { id:57, category:"病害虫・防除", term:"天敵", reading:"てんてき", definition_ja:"害虫を食べる生き物。生物的な防除に利用される。", definition_id:"Musuh alami yang memangsa hama; dipakai untuk pengendalian biologis." },
+  { id:58, category:"病害虫・防除", term:"防虫ネット", reading:"ぼうちゅうねっと", definition_ja:"害虫の侵入を防ぐために張る網。", definition_id:"Jaring yang dipasang untuk mencegah masuknya serangga hama." },
+  { id:59, category:"病害虫・防除", term:"農薬の安全使用", reading:"のうやくのあんぜんしよう", definition_ja:"使用量・回数・収穫前日数などの決まりを守って農薬を使うこと。", definition_id:"Menggunakan pestisida sesuai aturan dosis, frekuensi, dan jeda sebelum panen." },
+  { id:60, category:"収穫・出荷", term:"収穫", reading:"しゅうかく", definition_ja:"育った作物を取り入れること。", definition_id:"Memanen tanaman yang sudah tumbuh." },
+  { id:61, category:"収穫・出荷", term:"出荷", reading:"しゅっか", definition_ja:"作物を市場や店に送り出すこと。", definition_id:"Mengirim hasil panen ke pasar atau toko." },
+  { id:62, category:"収穫・出荷", term:"選別", reading:"せんべつ", definition_ja:"作物を大きさや品質ごとに分けること。", definition_id:"Menyortir hasil panen berdasarkan ukuran dan kualitas." },
+  { id:63, category:"収穫・出荷", term:"規格", reading:"きかく", definition_ja:"出荷する作物の大きさや品質の基準。", definition_id:"Standar ukuran dan kualitas untuk hasil yang akan dikirim." },
+  { id:64, category:"収穫・出荷", term:"等級", reading:"とうきゅう", definition_ja:"品質によるランク分け。秀・優・良などで表す。", definition_id:"Pengelompokan kelas berdasarkan mutu (misalnya: super, baik, cukup)." },
+  { id:65, category:"収穫・出荷", term:"調製", reading:"ちょうせい", definition_ja:"出荷前に作物の汚れや余分な部分を取り、見栄えよく整えること。", definition_id:"Membersihkan dan merapikan hasil panen agar tampak baik sebelum dikirim." },
+  { id:66, category:"収穫・出荷", term:"箱詰め", reading:"はこづめ", definition_ja:"作物を傷つけないように箱に詰めること。", definition_id:"Mengemas hasil panen ke dalam kotak agar tidak rusak." },
+  { id:67, category:"収穫・出荷", term:"包装", reading:"ほうそう", definition_ja:"作物を袋や容器に入れること。", definition_id:"Membungkus hasil panen ke dalam kantong atau wadah." },
+  { id:68, category:"収穫・出荷", term:"出荷調整", reading:"しゅっかちょうせい", definition_ja:"市場の需要や価格に合わせて、出荷する量や時期を調節すること。", definition_id:"Mengatur jumlah dan waktu pengiriman sesuai permintaan dan harga pasar." },
+  { id:69, category:"収穫・出荷", term:"鮮度", reading:"せんど", definition_ja:"作物の新しさ・みずみずしさ。", definition_id:"Kesegaran hasil panen." },
+  { id:70, category:"収穫・出荷", term:"予冷", reading:"よれい", definition_ja:"収穫後すぐに冷やして、鮮度を保つこと。", definition_id:"Pendinginan segera setelah panen untuk menjaga kesegaran." },
+  { id:71, category:"収穫・出荷", term:"貯蔵", reading:"ちょぞう", definition_ja:"作物を一定期間、適切な環境で保存すること。", definition_id:"Menyimpan hasil panen pada lingkungan yang sesuai untuk jangka waktu tertentu." },
+  { id:72, category:"収穫・出荷", term:"集出荷場", reading:"しゅうしゅっかじょう", definition_ja:"地域の作物を集めて選別・包装・出荷する施設。", definition_id:"Fasilitas untuk mengumpulkan, menyortir, mengemas, dan mengirim hasil panen." },
+  { id:73, category:"収穫・出荷", term:"トレーサビリティ", reading:"とれーさびりてぃ", definition_ja:"作物がいつ・どこで・どう作られたかを追跡できること。", definition_id:"Ketertelusuran: dapat melacak kapan, di mana, dan bagaimana hasil dibuat." },
+  { id:74, category:"収穫・出荷", term:"市場", reading:"しじょう", definition_ja:"作物を売買する場所。卸売市場など。", definition_id:"Pasar tempat jual beli hasil panen (pasar grosir, dll.)." },
+  { id:75, category:"収穫・出荷", term:"直売所", reading:"ちょくばいじょ", definition_ja:"農家が消費者に直接、作物を販売する場所。", definition_id:"Tempat petani menjual hasil panen langsung ke konsumen." },
+  { id:76, category:"収穫・出荷", term:"農協（JA）", reading:"のうきょう", definition_ja:"農家を支援する農業協同組合。出荷や資材購入などを助ける。", definition_id:"Koperasi pertanian (JA) yang membantu petani dalam pengiriman dan pembelian bahan." },
+  { id:77, category:"収穫・出荷", term:"計量", reading:"けいりょう", definition_ja:"作物の重さや量を量ること。", definition_id:"Menimbang berat atau mengukur jumlah hasil panen." },
+  { id:78, category:"畜産", term:"畜産", reading:"ちくさん", definition_ja:"家畜を飼育し、肉・乳・卵などを生産すること。", definition_id:"Peternakan untuk menghasilkan daging, susu, telur, dll." },
+  { id:79, category:"畜産", term:"家畜", reading:"かちく", definition_ja:"人が飼育する動物。牛・豚・鶏など。", definition_id:"Hewan ternak yang dipelihara manusia (sapi, babi, ayam)." },
+  { id:80, category:"畜産", term:"飼育", reading:"しいく", definition_ja:"家畜を世話して育てること。", definition_id:"Memelihara dan membesarkan hewan ternak." },
+  { id:81, category:"畜産", term:"飼料", reading:"しりょう", definition_ja:"家畜に与えるえさ。", definition_id:"Pakan yang diberikan kepada ternak." },
+  { id:82, category:"畜産", term:"給餌", reading:"きゅうじ", definition_ja:"家畜にえさを与えること。", definition_id:"Memberi pakan kepada ternak." },
+  { id:83, category:"畜産", term:"給水", reading:"きゅうすい", definition_ja:"家畜に水を与えること。", definition_id:"Memberi minum kepada ternak." },
+  { id:84, category:"畜産", term:"乳牛", reading:"にゅうぎゅう", definition_ja:"牛乳をとるために飼う牛。", definition_id:"Sapi yang dipelihara untuk diambil susunya (sapi perah)." },
+  { id:85, category:"畜産", term:"肉牛", reading:"にくぎゅう", definition_ja:"肉をとるために飼う牛。", definition_id:"Sapi yang dipelihara untuk diambil dagingnya (sapi potong)." },
+  { id:86, category:"畜産", term:"搾乳", reading:"さくにゅう", definition_ja:"乳牛から牛乳をしぼること。", definition_id:"Memerah susu dari sapi perah." },
+  { id:87, category:"畜産", term:"養豚", reading:"ようとん", definition_ja:"豚を飼育すること。", definition_id:"Beternak babi." },
+  { id:88, category:"畜産", term:"養鶏", reading:"ようけい", definition_ja:"鶏を飼育すること。", definition_id:"Beternak ayam." },
+  { id:89, category:"畜産", term:"採卵", reading:"さいらん", definition_ja:"鶏から卵を集めること。", definition_id:"Mengumpulkan telur dari ayam." },
+  { id:90, category:"畜産", term:"ブロイラー", reading:"ぶろいらー", definition_ja:"肉をとるために短期間で育てる鶏。", definition_id:"Ayam pedaging yang dibesarkan dalam waktu singkat (broiler)." },
+  { id:91, category:"畜産", term:"繁殖", reading:"はんしょく", definition_ja:"家畜に子を産ませ、数を増やすこと。", definition_id:"Mengembangbiakkan ternak untuk menambah jumlahnya." },
+  { id:92, category:"畜産", term:"分娩", reading:"ぶんべん", definition_ja:"家畜が子を産むこと。", definition_id:"Hewan ternak melahirkan anak." },
+  { id:93, category:"畜産", term:"畜舎", reading:"ちくしゃ", definition_ja:"家畜を飼うための小屋や建物。", definition_id:"Kandang atau bangunan untuk memelihara ternak." },
+  { id:94, category:"畜産", term:"防疫", reading:"ぼうえき", definition_ja:"家畜の伝染病が広がるのを防ぐこと。", definition_id:"Mencegah penyebaran penyakit menular pada ternak." },
+  { id:95, category:"畜産", term:"糞尿処理", reading:"ふんにょうしょり", definition_ja:"家畜の排せつ物を適切に処理し、堆肥などに活用すること。", definition_id:"Mengolah kotoran ternak dengan benar dan memanfaatkannya jadi kompos." },
+  { id:96, category:"畜産", term:"健康観察", reading:"けんこうかんさつ", definition_ja:"家畜の食欲・動き・ふんの状態などを毎日確認すること。", definition_id:"Mengamati nafsu makan, gerak, dan kotoran ternak setiap hari." },
+  { id:97, category:"畜産", term:"消毒（畜産）", reading:"しょうどく", definition_ja:"畜舎や器具の菌を取り除き、清潔に保つこと。", definition_id:"Membersihkan kuman pada kandang dan peralatan agar tetap higienis." },
+  { id:98, category:"畜産", term:"衛生管理（畜産）", reading:"えいせいかんり", definition_ja:"家畜の病気を防ぐため、清潔な環境で飼育を管理すること。", definition_id:"Mengelola pemeliharaan di lingkungan bersih untuk mencegah penyakit ternak." },
+  { id:99, category:"農業機械・施設", term:"農業機械", reading:"のうぎょうきかい", definition_ja:"農作業に使う機械の総称。", definition_id:"Sebutan umum untuk mesin yang dipakai dalam pekerjaan pertanian." },
+  { id:100, category:"農業機械・施設", term:"トラクター", reading:"とらくたー", definition_ja:"土を耕したり、機械を引いたりする農業用の車両。", definition_id:"Kendaraan pertanian untuk membajak tanah dan menarik alat." },
+  { id:101, category:"農業機械・施設", term:"耕うん", reading:"こううん", definition_ja:"土を掘り起こして、やわらかくすること。", definition_id:"Membajak dan menggemburkan tanah." },
+  { id:102, category:"農業機械・施設", term:"田植え機", reading:"たうえき", definition_ja:"稲の苗を水田に植える機械。", definition_id:"Mesin untuk menanam bibit padi di sawah." },
+  { id:103, category:"農業機械・施設", term:"コンバイン", reading:"こんばいん", definition_ja:"稲や麦を刈り取り、同時に脱穀する機械。", definition_id:"Mesin yang memanen padi/gandum sekaligus merontokkannya." },
+  { id:104, category:"農業機械・施設", term:"管理機", reading:"かんりき", definition_ja:"耕うんや除草、土寄せなどに使う小型の機械。", definition_id:"Mesin kecil untuk olah tanah, penyiangan, dan penimbunan." },
+  { id:105, category:"農業機械・施設", term:"防除機", reading:"ぼうじょき", definition_ja:"農薬を散布するための機械。", definition_id:"Mesin untuk menyemprotkan pestisida." },
+  { id:106, category:"農業機械・施設", term:"ビニールハウス", reading:"びにーるはうす", definition_ja:"作物を育てるためのビニール製の施設。", definition_id:"Rumah kaca berbahan plastik untuk membudidayakan tanaman." },
+  { id:107, category:"農業機械・施設", term:"温室", reading:"おんしつ", definition_ja:"温度を保ちながら作物を育てる施設。", definition_id:"Fasilitas yang menjaga suhu untuk membudidayakan tanaman." },
+  { id:108, category:"農業機械・施設", term:"灌漑設備", reading:"かんがいせつび", definition_ja:"作物に水を供給するための設備。", definition_id:"Fasilitas untuk menyuplai air ke tanaman (irigasi)." },
+  { id:109, category:"農業機械・施設", term:"農機具点検", reading:"のうきぐてんけん", definition_ja:"機械や道具が安全に使えるか、使う前に確認すること。", definition_id:"Memeriksa keamanan alat/mesin pertanian sebelum digunakan." },
+  { id:110, category:"農業機械・施設", term:"燃料", reading:"ねんりょう", definition_ja:"機械を動かすための油など。軽油・ガソリンなど。", definition_id:"Bahan bakar untuk menggerakkan mesin (solar, bensin)." },
+  { id:111, category:"安全・衛生", term:"農作業安全", reading:"のうさぎょうあんぜん", definition_ja:"けがや事故を防ぎ、安全に農作業を行うこと。", definition_id:"Melakukan pekerjaan pertanian dengan aman, mencegah cedera dan kecelakaan." },
+  { id:112, category:"安全・衛生", term:"熱中症", reading:"ねっちゅうしょう", definition_ja:"暑い環境で体調を崩すこと。水分・塩分の補給と休憩が大切。", definition_id:"Sengatan panas; penting minum air, garam, dan beristirahat." },
+  { id:113, category:"安全・衛生", term:"保護具", reading:"ほごぐ", definition_ja:"体を守るための手袋・マスク・帽子・防護メガネなど。", definition_id:"Alat pelindung diri: sarung tangan, masker, topi, kacamata." },
+  { id:114, category:"安全・衛生", term:"農薬中毒", reading:"のうやくちゅうどく", definition_ja:"農薬を吸い込んだり浴びたりして体調を崩すこと。保護具で防ぐ。", definition_id:"Keracunan akibat menghirup/terkena pestisida; dicegah dengan APD." },
+  { id:115, category:"安全・衛生", term:"機械事故", reading:"きかいじこ", definition_ja:"農業機械への巻き込みや転落などの事故。", definition_id:"Kecelakaan akibat mesin pertanian (terjepit, terjatuh)." },
+  { id:116, category:"安全・衛生", term:"転落・転倒", reading:"てんらく・てんとう", definition_ja:"高い所からの落下や、滑って転ぶ事故。", definition_id:"Kecelakaan jatuh dari ketinggian atau tergelincir." },
+  { id:117, category:"安全・衛生", term:"異物混入", reading:"いぶつこんにゅう", definition_ja:"作物に石・虫・毛髪などの異物が混じること。防止が重要。", definition_id:"Tercampurnya benda asing (batu, serangga, rambut) ke hasil panen." },
+  { id:118, category:"安全・衛生", term:"作業手順", reading:"さぎょうてじゅん", definition_ja:"安全・確実に作業を進めるための、決められた順序。", definition_id:"Urutan kerja yang ditetapkan agar aman dan akurat." },
+  { id:119, category:"安全・衛生", term:"報告・連絡・相談", reading:"ほうこく・れんらく・そうだん", definition_ja:"「ほうれんそう」。仕事を円滑に進める基本のコミュニケーション。", definition_id:"'Hourensou': lapor, beri info, konsultasi — komunikasi dasar kerja." },
+  { id:120, category:"安全・衛生", term:"整理整頓", reading:"せいりせいとん", definition_ja:"道具や作業場を片付けて整えること。事故防止にもつながる。", definition_id:"Menata dan merapikan alat serta tempat kerja; mencegah kecelakaan." },
+];
+
+// ===== FURIGANA DICTIONARY =====
+// longest match first (longer entries take priority over shorter ones)
+const FURI_RAW = [
+  ["土壌酸度","どじょうさんど"],
+  ["土壌","どじょう"],
+  ["酸度","さんど"],
+  ["土づくり","つちづくり"],
+  ["土寄せ","つちよせ"],
+  ["土","つち"],
+  ["栽培管理","さいばいかんり"],
+  ["露地栽培","ろじさいばい"],
+  ["施設栽培","しせつさいばい"],
+  ["水耕栽培","すいこうさいばい"],
+  ["栽培","さいばい"],
+  ["有機肥料","ゆうきひりょう"],
+  ["化学肥料","かがくひりょう"],
+  ["肥料","ひりょう"],
+  ["堆肥","たいひ"],
+  ["施肥","せひ"],
+  ["有機","ゆうき"],
+  ["種まき","たねまき"],
+  ["播種","はしゅ"],
+  ["種","たね"],
+  ["育苗","いくびょう"],
+  ["苗","なえ"],
+  ["定植","ていしょく"],
+  ["移植","いしょく"],
+  ["灌水","かんすい"],
+  ["水管理","みずかんり"],
+  ["間引き","まびき"],
+  ["摘心","てきしん"],
+  ["除草剤","じょそうざい"],
+  ["除草","じょそう"],
+  ["連作障害","れんさくしょうがい"],
+  ["連作","れんさく"],
+  ["輪作","りんさく"],
+  ["作物","さくもつ"],
+  ["葉菜類","ようさいるい"],
+  ["果菜類","かさいるい"],
+  ["根菜類","こんさいるい"],
+  ["果樹","かじゅ"],
+  ["稲作","いなさく"],
+  ["水田","すいでん"],
+  ["畑","はたけ"],
+  ["ほ場","ほじょう"],
+  ["受粉","じゅふん"],
+  ["摘果","てきか"],
+  ["整枝","せいし"],
+  ["剪定","せんてい"],
+  ["生育","せいいく"],
+  ["収量","しゅうりょう"],
+  ["品種","ひんしゅ"],
+  ["旬","しゅん"],
+  ["花粉","かふん"],
+  ["樹形","じゅけい"],
+  ["株元","かぶもと"],
+  ["株","かぶ"],
+  ["実","み"],
+  ["茎","くき"],
+  ["先端","せんたん"],
+  ["倒れ","たおれ"],
+  ["病害虫","びょうがいちゅう"],
+  ["害虫","がいちゅう"],
+  ["病気","びょうき"],
+  ["防除暦","ぼうじょれき"],
+  ["防除機","ぼうじょき"],
+  ["防除","ぼうじょ"],
+  ["農薬希釈","のうやくきしゃく"],
+  ["残留農薬","ざんりゅうのうやく"],
+  ["農薬","のうやく"],
+  ["希釈","きしゃく"],
+  ["残留","ざんりゅう"],
+  ["殺虫剤","さっちゅうざい"],
+  ["殺菌剤","さっきんざい"],
+  ["雑草","ざっそう"],
+  ["散布","さんぷ"],
+  ["天敵","てんてき"],
+  ["防虫","ぼうちゅう"],
+  ["安全使用","あんぜんしよう"],
+  ["使用量","しようりょう"],
+  ["使用","しよう"],
+  ["回数","かいすう"],
+  ["前日数","ぜんにっすう"],
+  ["侵入","しんにゅう"],
+  ["収穫","しゅうかく"],
+  ["出荷調整","しゅっかちょうせい"],
+  ["出荷","しゅっか"],
+  ["選別","せんべつ"],
+  ["規格","きかく"],
+  ["等級","とうきゅう"],
+  ["調製","ちょうせい"],
+  ["箱詰め","はこづめ"],
+  ["包装","ほうそう"],
+  ["鮮度","せんど"],
+  ["予冷","よれい"],
+  ["貯蔵","ちょぞう"],
+  ["集出荷場","しゅうしゅっかじょう"],
+  ["市場","しじょう"],
+  ["直売所","ちょくばいじょ"],
+  ["農協","のうきょう"],
+  ["卸売","おろしうり"],
+  ["計量","けいりょう"],
+  ["畜産","ちくさん"],
+  ["家畜","かちく"],
+  ["飼育","しいく"],
+  ["飼料","しりょう"],
+  ["給餌","きゅうじ"],
+  ["給水","きゅうすい"],
+  ["乳牛","にゅうぎゅう"],
+  ["肉牛","にくぎゅう"],
+  ["搾乳","さくにゅう"],
+  ["養豚","ようとん"],
+  ["養鶏","ようけい"],
+  ["採卵","さいらん"],
+  ["繁殖","はんしょく"],
+  ["分娩","ぶんべん"],
+  ["畜舎","ちくしゃ"],
+  ["防疫","ぼうえき"],
+  ["糞尿処理","ふんにょうしょり"],
+  ["糞尿","ふんにょう"],
+  ["排せつ物","はいせつぶつ"],
+  ["健康観察","けんこうかんさつ"],
+  ["観察","かんさつ"],
+  ["伝染病","でんせんびょう"],
+  ["牛乳","ぎゅうにゅう"],
+  ["牛","うし"],
+  ["豚","ぶた"],
+  ["鶏","にわとり"],
+  ["卵","たまご"],
+  ["食欲","しょくよく"],
+  ["鶏ふん","けいふん"],
+  ["農業機械","のうぎょうきかい"],
+  ["農業","のうぎょう"],
+  ["機械事故","きかいじこ"],
+  ["機械","きかい"],
+  ["耕うん","こううん"],
+  ["田植え機","たうえき"],
+  ["田植え","たうえ"],
+  ["管理機","かんりき"],
+  ["温室","おんしつ"],
+  ["灌漑設備","かんがいせつび"],
+  ["灌漑","かんがい"],
+  ["農機具点検","のうきぐてんけん"],
+  ["農機具","のうきぐ"],
+  ["点検","てんけん"],
+  ["燃料","ねんりょう"],
+  ["軽油","けいゆ"],
+  ["脱穀","だっこく"],
+  ["農作業安全","のうさぎょうあんぜん"],
+  ["農作業","のうさぎょう"],
+  ["熱中症","ねっちゅうしょう"],
+  ["保護具","ほごぐ"],
+  ["保護","ほご"],
+  ["農薬中毒","のうやくちゅうどく"],
+  ["中毒","ちゅうどく"],
+  ["転落","てんらく"],
+  ["転倒","てんとう"],
+  ["異物混入","いぶつこんにゅう"],
+  ["異物","いぶつ"],
+  ["混入","こんにゅう"],
+  ["作業手順","さぎょうてじゅん"],
+  ["手順","てじゅん"],
+  ["報告","ほうこく"],
+  ["連絡","れんらく"],
+  ["相談","そうだん"],
+  ["整理整頓","せいりせいとん"],
+  ["整理","せいり"],
+  ["整頓","せいとん"],
+  ["衛生管理","えいせいかんり"],
+  ["衛生","えいせい"],
+  ["管理","かんり"],
+  ["安全","あんぜん"],
+  ["確認","かくにん"],
+  ["消毒","しょうどく"],
+  ["殺菌","さっきん"],
+  ["水分","すいぶん"],
+  ["塩分","えんぶん"],
+  ["補給","ほきゅう"],
+  ["休憩","きゅうけい"],
+  ["品質","ひんしつ"],
+  ["基準","きじゅん"],
+  ["基準値","きじゅんち"],
+  ["健康","けんこう"],
+  ["適切","てきせつ"],
+  ["流通","りゅうつう"],
+  ["追跡","ついせき"],
+  ["容器","ようき"],
+  ["高所","こうしょ"],
+  ["必要","ひつよう"],
+  ["場所","ばしょ"],
+  ["動物","どうぶつ"],
+  ["植物","しょくぶつ"],
+  ["成長","せいちょう"],
+  ["栄養","えいよう"],
+  ["発酵","はっこう"],
+  ["改良","かいりょう"],
+  ["調整","ちょうせい"],
+  ["気温","きおん"],
+  ["温度","おんど"],
+  ["供給","きょうきゅう"],
+  ["消費者","しょうひしゃ"],
+  ["販売","はんばい"],
+  ["協同組合","きょうどうくみあい"],
+  ["組合","くみあい"],
+  ["期間","きかん"],
+  ["一定","いってい"],
+  ["屋外","おくがい"],
+  ["余分","よぶん"],
+  ["被害","ひがい"],
+  ["対象","たいしょう"],
+  ["生産","せいさん"],
+  ["毎日","まいにち"],
+  ["体調","たいちょう"],
+  ["面積","めんせき"],
+  ["価格","かかく"],
+  ["需要","じゅよう"],
+  ["地域","ちいき"],
+  ["周り","まわり"],
+  ["間隔","かんかく"],
+  ["日当たり","ひあたり"],
+  ["原因","げんいん"],
+  ["防止","ぼうし"],
+  ["植","う"],
+  ["育","そだ"],
+  ["入","い"],
+  ["与","あた"],
+  ["動植物","どうしょくぶつ"],
+  ["由来","ゆらい"],
+  ["化学","かがく"],
+  ["的","てき"],
+  ["作","つく"],
+  ["成分","せいぶん"],
+  ["落","お"],
+  ["同","おな"],
+  ["意味","いみ"],
+  ["付","つ"],
+  ["前","まえ"],
+  ["若","わか"],
+  ["場","じょう"],
+  ["別","べつ"],
+  ["替","か"],
+  ["水","みず"],
+  ["抜","ぬ"],
+  ["間引","まび"],
+  ["摘","つ"],
+  ["周","まわ"],
+  ["取","と"],
+  ["除","のぞ"],
+  ["寄","よ"],
+  ["盛","も"],
+  ["倒","たお"],
+  ["役立","やくだ"],
+  ["土寄","つちよ"],
+  ["続","つづ"],
+  ["悪","わる"],
+  ["障害","しょうがい"],
+  ["異","こと"],
+  ["順番","じゅんばん"],
+  ["防","ふせ"],
+  ["酸性","さんせい"],
+  ["性","せい"],
+  ["度合","どあ"],
+  ["合","あ"],
+  ["田","た"],
+  ["自然","しぜん"],
+  ["環境","かんきょう"],
+  ["行","おこな"],
+  ["露地","ろじ"],
+  ["施設","しせつ"],
+  ["中","なか"],
+  ["方法","ほうほう"],
+  ["使","つか"],
+  ["養液","ようえき"],
+  ["水耕","すいこう"],
+  ["食","た"],
+  ["野菜","やさい"],
+  ["葉菜","ようさい"],
+  ["類","るい"],
+  ["果菜","かさい"],
+  ["根","ね"],
+  ["大根","だいこん"],
+  ["人参","にんじん"],
+  ["根菜","こんさい"],
+  ["果物","くだもの"],
+  ["木","き"],
+  ["米","べい"],
+  ["土地","とち"],
+  ["農地","のうち"],
+  ["残","のこ"],
+  ["高","たか"],
+  ["枝","えだ"],
+  ["切","き"],
+  ["整","ととの"],
+  ["日当","ひあ"],
+  ["種類","しゅるい"],
+  ["味","あじ"],
+  ["多","おお"],
+  ["時期","じき"],
+  ["害","がい"],
+  ["方","かた"],
+  ["虫","むし"],
+  ["菌","きん"],
+  ["弱","よわ"],
+  ["減","へ"],
+  ["薬","くすり"],
+  ["駆除","くじょ"],
+  ["殺虫","さっちゅう"],
+  ["剤","ざい"],
+  ["枯","か"],
+  ["以外","いがい"],
+  ["不要","ふよう"],
+  ["予定","よてい"],
+  ["暦","れき"],
+  ["決","き"],
+  ["割合","わりあい"],
+  ["薄","うす"],
+  ["値","ち"],
+  ["守","まも"],
+  ["生物","せいぶつ"],
+  ["利用","りよう"],
+  ["張","は"],
+  ["網","あみ"],
+  ["前日","ぜんじつ"],
+  ["数","すう"],
+  ["店","みせ"],
+  ["送","おく"],
+  ["出","だ"],
+  ["大","おお"],
+  ["分","わ"],
+  ["秀","しゅう"],
+  ["優","ゆう"],
+  ["良","りょう"],
+  ["汚","よご"],
+  ["部分","ぶぶん"],
+  ["見栄","みば"],
+  ["箱","ばこ"],
+  ["詰","つ"],
+  ["箱詰","はこづ"],
+  ["袋","ふくろ"],
+  ["調節","ちょうせつ"],
+  ["新","あたら"],
+  ["後","ご"],
+  ["保","たも"],
+  ["予","よ"],
+  ["保存","ほぞん"],
+  ["集","あつ"],
+  ["集出荷","しゅうしゅっか"],
+  ["売買","ばいばい"],
+  ["農家","のうか"],
+  ["消費","しょうひ"],
+  ["者","しゃ"],
+  ["直接","ちょくせつ"],
+  ["直売","ちょくばい"],
+  ["支援","しえん"],
+  ["協同","きょうどう"],
+  ["資材","しざい"],
+  ["購入","こうにゅう"],
+  ["助","たす"],
+  ["重","おも"],
+  ["肉","にく"],
+  ["乳","ちち"],
+  ["人","ひと"],
+  ["世話","せわ"],
+  ["飼","か"],
+  ["短","たん"],
+  ["子","こ"],
+  ["産","う"],
+  ["増","ふ"],
+  ["小屋","こや"],
+  ["建物","たてもの"],
+  ["伝染","でんせん"],
+  ["病","びょう"],
+  ["広","ひろ"],
+  ["排","はい"],
+  ["処理","しょり"],
+  ["活用","かつよう"],
+  ["動","うご"],
+  ["状態","じょうたい"],
+  ["器具","きぐ"],
+  ["清潔","せいけつ"],
+  ["農","のう"],
+  ["作業","さぎょう"],
+  ["総称","そうしょう"],
+  ["引","ひ"],
+  ["用","よう"],
+  ["車両","しゃりょう"],
+  ["掘","ほ"],
+  ["起","お"],
+  ["田植","たう"],
+  ["機","き"],
+  ["麦","むぎ"],
+  ["刈","か"],
+  ["同時","どうじ"],
+  ["小型","こがた"],
+  ["製","せい"],
+  ["設備","せつび"],
+  ["道具","どうぐ"],
+  ["機具","きぐ"],
+  ["油","あぶら"],
+  ["事故","じこ"],
+  ["暑","あつ"],
+  ["崩","くず"],
+  ["大切","たいせつ"],
+  ["熱中","ねっちゅう"],
+  ["症","しょう"],
+  ["体","からだ"],
+  ["手袋","てぶくろ"],
+  ["帽子","ぼうし"],
+  ["防護","ぼうご"],
+  ["具","ぐ"],
+  ["吸","す"],
+  ["込","こ"],
+  ["浴","あ"],
+  ["巻","ま"],
+  ["落下","らっか"],
+  ["滑","すべ"],
+  ["転","ころ"],
+  ["石","いし"],
+  ["毛髪","もうはつ"],
+  ["重要","じゅうよう"],
+  ["確実","かくじつ"],
+  ["進","すす"],
+  ["順序","じゅんじょ"],
+  ["仕事","しごと"],
+  ["円滑","えんかつ"],
+  ["基本","きほん"],
+  ["片付","かたづ"],
+  ["最も","もっとも"],
+  ["示し","しめし"],
+  ["示す","しめす"],
+  ["言い方","いいかた"],
+  ["言い","いい"],
+  ["耕し","たがやし"],
+  ["耕す","たがやす"],
+  ["落ち葉","おちば"],
+  ["ほうれん草","ほうれんそう"],
+  ["高い所","たかいところ"],
+  ["量る","はかる"],
+  ["混み","こみ"],
+  ["混じ","まじ"],
+  ["混じる","まじる"],
+  ["傷み","いたみ"],
+  ["傷む","いたむ"],
+  ["傷つ","きずつ"],
+  ["生え","はえ"],
+  ["生える","はえる"],
+  ["生き","いき"],
+  ["表す","あらわす"],
+  ["表し","あらわし"],
+  ["冷やし","ひやし"],
+  ["冷やす","ひやす"],
+  ["有機物","ゆうきぶつ"],
+  ["日数","にっすう"],
+  ["耕","たがや"],
+  ["葉","は"],
+  ["物","もの"],
+  ["量","りょう"],
+  ["混","こん"],
+  ["草","くさ"],
+  ["稲","いね"],
+  ["傷","きず"],
+  ["生","せい"],
+  ["表","ひょう"],
+  ["冷","れい"],
+  ["所","しょ"],
+];
+
+// sort by kanji length descending (longest match first)
+const FURI_SORTED = [...FURI_RAW].sort((a, b) => b[0].length - a[0].length);
+
+function toRuby(text) {
+  if (!rubyMode) return text;
+  // Use placeholder trick to avoid double-replacement
+  let result = text;
+  const placeholders = [];
+  FURI_SORTED.forEach(([kanji, reading]) => {
+    if (result.includes(kanji)) {
+      const ph = '\x00' + placeholders.length + '\x00';
+      placeholders.push(`<ruby>${kanji}<rt>${reading}</rt></ruby>`);
+      result = result.split(kanji).join(ph);
+    }
+  });
+  // Restore
+  placeholders.forEach((html, i) => {
+    result = result.split('\x00' + i + '\x00').join(html);
+  });
+  return result;
+}
+
+// ===== STATE =====
+let filteredCards = [...CARDS];
+let currentIndex = 0;
+let isFlipped = false;
+let markedIds = JSON.parse(localStorage.getItem('nougyou_marked') || '[]');
+let seenIds = JSON.parse(localStorage.getItem('nougyou_seen') || '[]');
+let currentCat = 'すべて';
+let rubyMode        = false;
+let showIdInQuiz    = false;  // クイズ問題文のインドネシア語
+let showIdInChoices = false;  // 選択肢のインドネシア語
+
+// ===== TOGGLE: RUBY (iOSスイッチ) =====
+function toggleGlobalRuby() {
+  rubyMode = !rubyMode;
+  const sw  = document.getElementById('globalRubySwitch');
+  const txt = document.getElementById('globalRubyText');
+  txt.textContent = rubyMode ? 'ON' : 'OFF';
+  txt.classList.toggle('on', rubyMode);
+  sw.classList.toggle('on', rubyMode);
+  if (currentMode === 'flash') renderCard();
+  else if (quizCurrent) renderQuizQuestion();
+}
+
+// ===== TOGGLE: QUIZ INDONESIAN (問題ごと) =====
+function toggleQuizId() {
+  showIdInQuiz = !showIdInQuiz;
+  applyQuizIdState();
+}
+function applyQuizIdState() {
+  const btn   = document.getElementById('qIdToggleBtn');
+  const box   = document.getElementById('qIdBox');
+  const label = document.getElementById('qIdToggleLabel');
+  if (showIdInQuiz) {
+    box.classList.add('show');
+    btn.classList.add('active');
+    label.textContent = 'インドネシア語を隠す';
+  } else {
+    box.classList.remove('show');
+    btn.classList.remove('active');
+    label.textContent = 'インドネシア語を表示';
+  }
+}
+
+// ===== TOGGLE: CHOICE INDONESIAN (選択肢ごと) =====
+function toggleChoiceId() {
+  showIdInChoices = !showIdInChoices;
+  applyChoiceIdState();
+  rerenderChoiceLabels();
+}
+function applyChoiceIdState() {
+  const btn   = document.getElementById('qChoiceIdToggleBtn');
+  const label = document.getElementById('qChoiceIdToggleLabel');
+  if (!btn) return;
+  if (showIdInChoices) {
+    btn.classList.add('active');
+    label.textContent = 'インドネシア語あり';
+  } else {
+    btn.classList.remove('active');
+    label.textContent = 'インドネシア語なし';
+  }
+}
+
+// ===== CATEGORY BUTTONS =====
+function buildCatButtons() {
+  const cats = ['すべて', ...new Set(CARDS.map(c => c.category)), '⭐ スター'];
+  const wrap = document.getElementById('catButtons');
+  wrap.innerHTML = '';
+  cats.forEach(cat => {
+    const btn = document.createElement('button');
+    btn.className = 'cat-btn' + (cat === currentCat ? ' active' : '');
+    const count = cat === 'すべて' ? CARDS.length :
+                  cat === '⭐ スター' ? markedIds.length :
+                  CARDS.filter(c => c.category === cat).length;
+    btn.textContent = `${cat}（${count}）`;
+    btn.onclick = () => selectCat(cat);
+    wrap.appendChild(btn);
+  });
+}
+
+function selectCat(cat) {
+  currentCat = cat;
+  if (cat === 'すべて') filteredCards = [...CARDS];
+  else if (cat === '⭐ スター') filteredCards = CARDS.filter(c => markedIds.includes(c.id));
+  else filteredCards = CARDS.filter(c => c.category === cat);
+  currentIndex = 0;
+  buildCatButtons();
+
+  if (currentMode === 'flash') {
+    renderCard();
+  } else {
+    // クイズモード：問題中なら即リスタート、スタート画面なら件数だけ更新
+    const onQuestion = document.getElementById('quizQuestionScreen').style.display !== 'none';
+    if (onQuestion) {
+      if (filteredCards.length < 4) {
+        alert('このカテゴリのカードが4枚未満のため、クイズを開始できません。');
+        showQuizStart();
+        return;
+      }
+      startQuiz();
+    } else {
+      showQuizStart();
+    }
+  }
+}
+
+// ===== CARD RENDER =====
+function renderCard() {
+  const panel = document.getElementById('resultPanel');
+  const cardArea = document.getElementById('cardArea');
+
+  if (filteredCards.length === 0) {
+    cardArea.style.display = 'none';
+    document.querySelector('.controls').style.display = 'none';
+    panel.innerHTML = '<p style="color:var(--text-sub);font-size:0.9rem;padding:40px 0;">このカテゴリにカードがありません</p>';
+    panel.classList.add('show');
+    updateHeader();
+    return;
+  }
+
+  panel.classList.remove('show');
+  cardArea.style.display = 'block';
+  document.querySelector('.controls').style.display = 'flex';
+
+  setFlipped(false);
+
+  const card = filteredCards[currentIndex];
+  document.getElementById('frontCat').textContent  = card.category;
+  document.getElementById('termKanji').textContent  = card.term;
+  document.getElementById('termReading').textContent = card.reading;
+  document.getElementById('backCat').textContent    = card.category;
+  document.getElementById('backTerm').textContent   = card.term;
+  document.getElementById('defJa').innerHTML        = toRuby(card.definition_ja);
+  document.getElementById('defId').textContent      = card.definition_id;
+  document.getElementById('cardNum').textContent    = `${currentIndex + 1} / ${filteredCards.length}`;
+
+  const markBtn = document.getElementById('markBtn');
+  markBtn.textContent = markedIds.includes(card.id) ? '⭐ スター済' : '⭐ スター';
+  markBtn.classList.toggle('marked', markedIds.includes(card.id));
+
+  if (!seenIds.includes(card.id)) {
+    seenIds.push(card.id);
+    localStorage.setItem('nougyou_seen', JSON.stringify(seenIds));
+  }
+  updateProgress();
+  updateHeader();
+}
+
+function updateProgress() {
+  const total = filteredCards.length;
+  const seen = filteredCards.filter(c => seenIds.includes(c.id)).length;
+  const pct = total ? Math.round(seen / total * 100) : 0;
+  document.getElementById('progressLabel').textContent = `学習済み ${seen} / ${total} 枚`;
+  document.getElementById('progressPct').textContent = pct + '%';
+  document.getElementById('progressFill').style.width = pct + '%';
+}
+
+function updateHeader() {
+  document.getElementById('headerCount').textContent = `${filteredCards.length} 枚`;
+}
+
+// ===== FLIP =====
+function setFlipped(val) {
+  isFlipped = val;
+  document.getElementById('cardArea').classList.toggle('flipped', val);
+}
+
+function flipCard() { setFlipped(!isFlipped); }
+
+// ===== NAV =====
+function nextCard() {
+  if (currentIndex < filteredCards.length - 1) {
+    currentIndex++;
+    renderCard();
+  } else {
+    showResult();
+  }
+}
+
+function prevCard() {
+  if (currentIndex > 0) {
+    currentIndex--;
+    renderCard();
+  }
+}
+
+function showResult() {
+  const total = filteredCards.length;
+  const seen = filteredCards.filter(c => seenIds.includes(c.id)).length;
+  const panel = document.getElementById('resultPanel');
+  document.getElementById('resultMsg').textContent =
+    `${total}枚中 ${seen}枚を学習しました！おつかれさまでした 🎉`;
+  panel.classList.add('show');
+  document.getElementById('cardArea').style.display = 'none';
+  document.querySelector('.controls').style.display = 'none';
+}
+
+function restartAll() {
+  currentIndex = 0;
+  document.getElementById('cardArea').style.display = 'block';
+  document.querySelector('.controls').style.display = 'flex';
+  document.getElementById('resultPanel').classList.remove('show');
+  renderCard();
+}
+
+// ===== SHUFFLE =====
+function shuffleCards() {
+  for (let i = filteredCards.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [filteredCards[i], filteredCards[j]] = [filteredCards[j], filteredCards[i]];
+  }
+  currentIndex = 0;
+  renderCard();
+}
+
+// ===== MARK =====
+function toggleMark() {
+  const card = filteredCards[currentIndex];
+  if (!card) return;
+  if (markedIds.includes(card.id)) {
+    markedIds = markedIds.filter(id => id !== card.id);
+  } else {
+    markedIds.push(card.id);
+  }
+  localStorage.setItem('nougyou_marked', JSON.stringify(markedIds));
+  buildCatButtons();
+  renderCard();
+}
+
+// ===== RESET =====
+function resetProgress() {
+  if (!confirm('学習進捗をリセットしますか？')) return;
+  seenIds = [];
+  localStorage.removeItem('nougyou_seen');
+  currentIndex = 0;
+  renderCard();
+}
+
+// ===== KEYBOARD =====
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowRight') nextCard();
+  else if (e.key === 'ArrowLeft') prevCard();
+  else if (e.key === ' ' || e.key === 'Enter') { e.preventDefault(); flipCard(); }
+});
+
+// ===== TOUCH SWIPE =====
+let touchStartX = 0;
+document.getElementById('cardArea').addEventListener('touchstart', e => {
+  touchStartX = e.touches[0].clientX;
+}, { passive: true });
+document.getElementById('cardArea').addEventListener('touchend', e => {
+  const dx = e.changedTouches[0].clientX - touchStartX;
+  if (Math.abs(dx) > 60) {
+    if (dx < 0) nextCard(); else prevCard();
+  } else {
+    flipCard();
+  }
+}, { passive: true });
+
+// ===== PASSWORD VISIBILITY =====
+function togglePwVisibility() {
+  const input = document.getElementById('loginInput');
+  const btn   = document.getElementById('togglePwBtn');
+  if (input.type === 'password') {
+    input.type = 'text';
+    btn.textContent = '🙈';
+    btn.title = 'パスワードを隠す';
+  } else {
+    input.type = 'password';
+    btn.textContent = '👁';
+    btn.title = 'パスワードを表示';
+  }
+}
+
+// ===== LOGIN =====
+const APP_PASSWORD = 'saibai2026';
+
+function doLogin() {
+  const input = document.getElementById('loginInput').value;
+  if (input === APP_PASSWORD) {
+    localStorage.setItem('nougyou_auth', '1');
+    document.getElementById('loginOverlay').style.display = 'none';
+    document.getElementById('loginInput').value = '';
+    document.getElementById('loginError').classList.remove('show');
+  } else {
+    document.getElementById('loginError').classList.add('show');
+    document.getElementById('loginInput').value = '';
+    document.getElementById('loginInput').focus();
+  }
+}
+
+if (localStorage.getItem('nougyou_auth') === '1') {
+  document.getElementById('loginOverlay').style.display = 'none';
+} else {
+  setTimeout(() => document.getElementById('loginInput').focus(), 100);
+}
+
+// ===== INIT =====
+buildCatButtons();
+renderCard();
+
+// ===========================
+// ===== QUIZ LOGIC ==========
+// ===========================
+let currentMode = 'flash';
+let quizQtype = 'mixed';
+let quizQnum  = 20;
+let quizDeck  = [];
+let quizIndex = 0;
+let quizScore = 0;
+let quizWrongCards = [];
+let quizCurrent = null;
+
+function switchMode(mode) {
+  currentMode = mode;
+  document.getElementById('flashScreen').classList.toggle('hidden', mode !== 'flash');
+  document.getElementById('quizScreen').classList.toggle('active',  mode === 'quiz');
+  document.getElementById('tabFlash').classList.toggle('active', mode === 'flash');
+  document.getElementById('tabQuiz').classList.toggle('active',  mode === 'quiz');
+  document.getElementById('bottomBarFlash').style.display = mode === 'flash' ? 'flex' : 'none';
+  document.getElementById('bottomBarQuiz').classList.toggle('active', mode === 'quiz');
+  if (mode === 'quiz') showQuizStart();
+}
+
+function selectQtype(type) {
+  quizQtype = type;
+  ['optMixed','optTerm2Def','optDef2Term'].forEach(id => document.getElementById(id).classList.remove('selected'));
+  const map = { mixed:'optMixed', term2def:'optTerm2Def', def2term:'optDef2Term' };
+  document.getElementById(map[type]).classList.add('selected');
+}
+
+function selectQnum(n) {
+  quizQnum = n;
+  ['qnum10','qnum20','qnumAll'].forEach(id => document.getElementById(id).classList.remove('selected'));
+  const map = { 10:'qnum10', 20:'qnum20', 0:'qnumAll' };
+  document.getElementById(map[n]).classList.add('selected');
+}
+
+function showQuizStart() {
+  document.getElementById('quizStartScreen').style.display = 'block';
+  document.getElementById('quizQuestionScreen').style.display = 'none';
+  document.getElementById('quizResultScreen').classList.remove('show');
+  // カテゴリバッジ更新
+  document.getElementById('quizCatName').textContent = currentCat;
+  document.getElementById('quizCatCount').textContent = filteredCards.length;
+}
+
+function startQuiz(retryCards) {
+  const pool = retryCards || filteredCards;
+  if (pool.length < 4) {
+    alert('このカテゴリの用語が4枚未満です。「すべて」を選んでください。');
+    return;
+  }
+  quizDeck = [...pool].sort(() => Math.random() - 0.5);
+  if (!retryCards && quizQnum > 0) quizDeck = quizDeck.slice(0, quizQnum);
+  quizIndex = 0;
+  quizScore = 0;
+  quizWrongCards = [];
+  document.getElementById('quizStartScreen').style.display = 'none';
+  document.getElementById('quizQuestionScreen').style.display = 'block';
+  document.getElementById('quizResultScreen').classList.remove('show');
+  renderQuizQuestion();
+}
+
+function generateQuestion(card, type) {
+  const others = CARDS.filter(c => c.id !== card.id)
+                      .sort(() => Math.random() - 0.5).slice(0, 3);
+  const correctIdx = Math.floor(Math.random() * 4);
+  const choices = [...others];
+  choices.splice(correctIdx, 0, card);
+  return { card, type, choices, correctIdx };
+}
+
+function renderQuizQuestion() {
+  const card = quizDeck[quizIndex];
+  let type = quizQtype;
+  if (type === 'mixed') type = Math.random() < 0.5 ? 'term2def' : 'def2term';
+
+  quizCurrent = generateQuestion(card, type);
+
+  const total = quizDeck.length;
+  document.getElementById('qScoreCorrect').textContent = quizScore;
+  document.getElementById('qScoreTotal').textContent = total;
+  document.getElementById('qMiniFill').style.width = (quizIndex / total * 100) + '%';
+  document.getElementById('qScorePct').textContent =
+    quizIndex > 0 ? Math.round(quizScore / quizIndex * 100) + '%' : '-';
+  document.getElementById('qNumLabel').textContent = `第${quizIndex + 1}問 / ${total}問`;
+
+  // インドネシア語トグルをリセット（問題が変わったら隠す）
+  showIdInQuiz    = false;
+  showIdInChoices = false;
+
+  if (type === 'term2def') {
+    document.getElementById('qTypeLabel').textContent = '用語→意味';
+    // ルビONのとき用語にふりがな
+    if (rubyMode && card.reading) {
+      document.getElementById('qQuestionText').innerHTML =
+        `「<ruby>${card.term}<rt>${card.reading}</rt></ruby>」`;
+      document.getElementById('qQuestionSub').textContent = 'の意味はどれですか？';
+    } else {
+      document.getElementById('qQuestionText').textContent = `「${card.term}」`;
+      document.getElementById('qQuestionSub').textContent =
+        card.reading ? `（${card.reading}）の意味はどれですか？` : 'の意味はどれですか？';
+    }
+  } else {
+    document.getElementById('qTypeLabel').textContent   = '意味→用語';
+    document.getElementById('qQuestionText').innerHTML  = toRuby(card.definition_ja);
+    document.getElementById('qQuestionSub').textContent = '上の説明にあてはまる用語はどれですか？';
+  }
+
+  // インドネシア語ボックスをセット（状態はリセット済）
+  document.getElementById('qIdText').textContent = card.definition_id;
+  applyQuizIdState();
+
+  // 選択肢インドネシア語ボタンは term2def のときだけ表示
+  document.getElementById('qChoiceIdToggleBtn').style.display =
+    type === 'term2def' ? 'inline-flex' : 'none';
+  applyChoiceIdState();
+
+  // 選択肢を描画
+  quizCurrent.choices.forEach((c, i) => {
+    const btn = document.getElementById('choice' + i);
+    if (type === 'term2def') {
+      const jaText = toRuby(c.definition_ja);
+      const idSpan = showIdInChoices
+        ? `<span class="choice-id">🇮🇩 ${c.definition_id}</span>`
+        : '';
+      btn.innerHTML = `<span>${jaText}</span>${idSpan}`;
+    } else {
+      btn.innerHTML = toRuby(c.term);
+    }
+    btn.className = 'quiz-choice';
+    btn.disabled  = false;
+  });
+
+  const fb = document.getElementById('qFeedback');
+  fb.className = 'quiz-feedback';
+  document.getElementById('qNextBtn').className = 'quiz-next-btn';
+}
+
+function rerenderChoiceLabels() {
+  if (!quizCurrent) return;
+  const { type, choices } = quizCurrent;
+  choices.forEach((c, i) => {
+    const btn = document.getElementById('choice' + i);
+    if (!btn) return;
+    if (type === 'term2def') {
+      const jaText = toRuby(c.definition_ja);
+      const idSpan = showIdInChoices
+        ? `<span class="choice-id">🇮🇩 ${c.definition_id}</span>`
+        : '';
+      btn.innerHTML = `<span>${jaText}</span>${idSpan}`;
+    } else {
+      btn.innerHTML = toRuby(c.term);
+    }
+  });
+}
+
+function handleAnswer(chosenIdx) {
+  const { card, type, choices, correctIdx } = quizCurrent;
+  const isCorrect = chosenIdx === correctIdx;
+
+  for (let i = 0; i < 4; i++) document.getElementById('choice' + i).disabled = true;
+  document.getElementById('choice' + correctIdx).classList.add('correct');
+  if (!isCorrect) document.getElementById('choice' + chosenIdx).classList.add('wrong');
+  // choice-id の色はCSSで自動変化（.correct/.wrong の子要素として定義済み）
+
+  const fb = document.getElementById('qFeedback');
+  fb.className = 'quiz-feedback show ' + (isCorrect ? 'ok' : 'ng');
+  document.getElementById('fbAnswer').textContent  =
+    isCorrect ? '✅ 正解！' : `❌ 不正解　正解：「${card.term}」`;
+  document.getElementById('fbDef').innerHTML       = toRuby(card.definition_ja);
+  document.getElementById('fbDefIdText').textContent = card.definition_id;
+
+  if (isCorrect) {
+    quizScore++;
+  } else {
+    if (!quizWrongCards.find(c => c.id === card.id)) quizWrongCards.push(card);
+  }
+
+  const total = quizDeck.length;
+  document.getElementById('qScoreCorrect').textContent = quizScore;
+  if (quizIndex + 1 > 0) {
+    document.getElementById('qScorePct').textContent =
+      Math.round(quizScore / (quizIndex + 1) * 100) + '%';
+  }
+
+  document.getElementById('qNextBtn').className = 'quiz-next-btn show';
+  document.getElementById('qNextBtn').textContent =
+    quizIndex + 1 >= total ? '結果を見る ›' : '次の問題 ›';
+}
+
+function nextQuizQuestion() {
+  quizIndex++;
+  if (quizIndex >= quizDeck.length) {
+    showQuizResult();
+  } else {
+    renderQuizQuestion();
+  }
+}
+
+function showQuizResult() {
+  document.getElementById('quizQuestionScreen').style.display = 'none';
+  const total = quizDeck.length;
+  const pct = Math.round(quizScore / total * 100);
+  let emoji = '😢', title = 'もう少し！';
+  if (pct >= 80) { emoji = '🎉'; title = '素晴らしい！'; }
+  else if (pct >= 60) { emoji = '😊'; title = 'よくできました！'; }
+  else if (pct >= 40) { emoji = '🙂'; title = 'もう一息！'; }
+
+  document.getElementById('resultEmoji').textContent = emoji;
+  document.getElementById('resultTitle').textContent = title;
+  document.getElementById('resultScoreDisplay').textContent = `${quizScore} / ${total}`;
+  document.getElementById('resultScoreLabel').textContent = `正解率 ${pct}%`;
+  document.getElementById('rcCorrect').textContent = quizScore;
+  document.getElementById('rcWrong').textContent = total - quizScore;
+
+  const retryBtn = document.getElementById('retryWrongBtn');
+  if (quizWrongCards.length > 0) {
+    retryBtn.style.display = '';
+    retryBtn.textContent = `❌ 間違えた${quizWrongCards.length}問を復習`;
+  } else {
+    retryBtn.style.display = 'none';
+  }
+
+  document.getElementById('quizResultScreen').classList.add('show');
+}
+
+function retryWrong() {
+  if (quizWrongCards.length === 0) return;
+  startQuiz(quizWrongCards);
+}
+</script>
+</body>
+</html>
